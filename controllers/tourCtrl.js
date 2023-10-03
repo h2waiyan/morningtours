@@ -1,9 +1,6 @@
 const Tour = require("../models/tourModel");
 
 exports.getAllTours = async (req, res) => {
-  // SELECT * FROM tours;
-  //   res.end("Hello");
-
   const tours = await Tour.find();
 
   res.status(200).json({
@@ -13,12 +10,20 @@ exports.getAllTours = async (req, res) => {
 };
 
 exports.getOneTour = async (req, res) => {
-  const tour = await Tour.findById(req.params.tourid);
+  try {
+    const tour = await Tour.findById(req.params.tourid);
 
-  res.status(200).json({
-    status: "success",
-    tour: tour,
-  });
+    res.status(200).json({
+      status: "success",
+      tour: tour,
+    });
+  } catch (err) {
+    res.status(401).json({
+      status: "fail",
+      message: "Something went wrong",
+      error: err,
+    });
+  }
 };
 
 exports.addNewTour = async (req, res) => {
@@ -38,34 +43,45 @@ exports.addNewTour = async (req, res) => {
   }
 };
 
-exports.updateOneTour = (req, res) => {
-  var newTour = {
-    ...tour,
-    duration: req.body.duration,
-  };
+exports.updateOneTour = async (req, res) => {
+  try {
+    const newTour = await Tour.findByIdAndUpdate(req.params.tourid, req.body, {
+      new: true,
+    });
 
-  res.status(200).json({
-    status: "success",
-    message: "Tour has been updated successfully.",
-    tour: newTour,
-  });
-};
-
-exports.deleteOneTour = (req, res) => {
-  if (!tour) {
-    return res.status(200).json({
+    res.status(200).json({
+      status: "success",
+      message: "Tour has been updated successfully.",
+      tour: newTour,
+    });
+  } catch (err) {
+    res.status(401).json({
       status: "fail",
-      message: "Tour doesn't exist",
+      message: "Something went wrong",
+      error: err,
     });
   }
-
-  res.status(200).json({
-    status: "success",
-    message: "Tour has been deleted successfully.",
-  });
 };
 
-exports.deleteAllTours = (req, res) => {};
+exports.deleteOneTour = async (req, res) => {
+  try {
+    await Tour.findByIdAndDelete(req.params.tourid);
+    res.status(204).json({
+      status: "success",
+      message: "Tour has been deleted successfully.",
+    });
+  } catch (err) {
+    res.status(400).json({
+      status: "fail",
+      message: "Error while deleting tour",
+    });
+  }
+};
+
+exports.deleteAllTours = (req, res) => {
+  try {
+  } catch (err) {}
+};
 
 exports.checkID = (req, res, next, val) => {
   if (req.params.tourid * 1 > tours.length) {
