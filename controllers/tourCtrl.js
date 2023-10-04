@@ -5,6 +5,7 @@ exports.getAllTours = async (req, res) => {
 
   res.status(200).json({
     status: "success",
+    results: tours.length,
     tours,
   });
 };
@@ -15,6 +16,7 @@ exports.getOneTour = async (req, res) => {
 
     res.status(200).json({
       status: "success",
+
       tour: tour,
     });
   } catch (err) {
