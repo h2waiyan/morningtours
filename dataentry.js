@@ -20,7 +20,7 @@ mongoose
 
 const importData = async () => {
   await Tour.insertMany(tours);
-  console.log("Data Successfully Deleted!");
+  console.log("Data Successfully Loaded!");
 };
 
 importData();
