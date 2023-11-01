@@ -1,5 +1,6 @@
 const express = require("express");
 const userCtrl = require("../controllers/userCtrl");
+const authCtrl = require("../controllers/authCtrl");
 
 const userRouter = express.Router();
 
@@ -12,6 +13,6 @@ userRouter
   .delete(userCtrl.deleteOneUser);
 
 userRouter.route("/login").post(userCtrl.checkBody, userCtrl.login); // get one user
-userRouter.route("/register").post(userCtrl.checkBody, userCtrl.register); // add new user
+userRouter.route("/register").post(authCtrl.register); // add new user
 
 module.exports = userRouter;

@@ -4,6 +4,9 @@ const userRouter = require("./routers/userRoute");
 const logger = require("./middlewares/logger");
 const reqtime = require("./middlewares/reqTime");
 
+const AppError = require("./utils/apperror");
+const GlobalErrorHandler = require("./controllers/errorCtrl");
+
 const app = express();
 
 // console.log(app.get("env")); // express env
@@ -20,5 +23,16 @@ app.get("/", (req, res) => {
 // Mounting the Router
 app.use("/api/v1/tours", tourRouter);
 app.use("/api/v1/users", userRouter);
+
+// HANDLE unhandled routes
+app.all("*", (req, res, next) => {
+  next(new AppError(`Can't find ${req.originalUrl} on this server.`, 404));
+  // res.status(404).json({
+  //   status: "fail",
+  //   message: `Can't find ${req.originalUrl} on this server.`,
+  // });
+});
+
+app.use(GlobalErrorHandler);
 
 module.exports = app;

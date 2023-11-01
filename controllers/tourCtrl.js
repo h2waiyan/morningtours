@@ -1,13 +1,15 @@
 const Tour = require("../models/tourModel");
 const APIFeatures = require("../utils/apifeatures");
+const AppError = require("../utils/apperror");
+const catchAsync = require("../utils/catchAsync");
+
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = 5;
   req.query.sort = "price";
-  console.log(">>>>>>");
   next();
 };
 
-exports.getAllTours = async (req, res) => {
+exports.getAllTours = catchAsync(async (req, res, next) => {
   // Build QUERY
   const features = new APIFeatures(Tour.find(), req.query)
     .filter()
@@ -22,7 +24,7 @@ exports.getAllTours = async (req, res) => {
     results: tours.length,
     tours,
   });
-};
+});
 
 exports.getOneTour = async (req, res) => {
   try {
@@ -30,15 +32,10 @@ exports.getOneTour = async (req, res) => {
 
     res.status(200).json({
       status: "success",
-
       tour: tour,
     });
   } catch (err) {
-    res.status(401).json({
-      status: "fail",
-      message: "Something went wrong",
-      error: err,
-    });
+    next(new AppError(err.message, 401));
   }
 };
 

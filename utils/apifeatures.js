@@ -18,9 +18,8 @@ class APIFeatures {
     let queryStr = JSON.stringify(queryObj);
     queryStr = queryStr.replace(/\b(gte|gt|lte|lt)\b/g, (match) => `$${match}`);
 
+    this.query = this.query.find(JSON.parse(queryStr));
     // query build => Select * from tours where duration = 5
-    this.query.find(JSON.parse(queryStr));
-
     return this;
   }
   // 2. Sort
@@ -34,7 +33,7 @@ class APIFeatures {
       // query => Select * from tours where duration = 5 order by price, duration
     } else {
       // 2.2 Default Sorting
-      this.query = query.sort("-createdAt");
+      this.query = this.query.sort("-createdAt");
     }
 
     return this;
