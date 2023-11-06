@@ -4,15 +4,14 @@ const authCtrl = require("../controllers/authCtrl");
 
 const userRouter = express.Router();
 
-userRouter.route("/").get(userCtrl.getAllUsers).delete(userCtrl.deleteAllUsers);
+userRouter.route("/getall").get(authCtrl.getAllUsers);
+// userRouter
+//   .route("/:id")
+//   .get(userCtrl.getOneUser)
+//   .patch(userCtrl.updateOneUser)
+//   .delete(userCtrl.deleteOneUser);
 
-userRouter
-  .route("/:id")
-  .get(userCtrl.getOneUser)
-  .patch(userCtrl.updateOneUser)
-  .delete(userCtrl.deleteOneUser);
-
-userRouter.route("/login").post(userCtrl.checkBody, userCtrl.login); // get one user
+userRouter.route("/login").post(authCtrl.login); // get one user
 userRouter.route("/register").post(authCtrl.register); // add new user
 
 module.exports = userRouter;

@@ -1,11 +1,12 @@
 const express = require("express");
 const tourCtrl = require("../controllers/tourCtrl");
+const authCtrl = require("../controllers/authCtrl");
 
 const tourRouter = express.Router();
 
 tourRouter
   .route("/")
-  .get(tourCtrl.getAllTours)
+  .get(authCtrl.protect, tourCtrl.getAllTours)
   .delete(tourCtrl.deleteAllTours)
   .post(tourCtrl.addNewTour);
 
