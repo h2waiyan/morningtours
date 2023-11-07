@@ -71,6 +71,11 @@ exports.getAllUsers = async (req, res) => {
   });
 };
 
+exports.changePassword = catchAsync(async (req, res, next) => {
+  // 1. ask email, oldpass, newpass
+  // 2. change to newpassword, passwordChangeAt
+});
+
 exports.protect = catchAsync(async (req, res, next) => {
   // 1) Getting token and check of it's there
   let token;
@@ -90,13 +95,17 @@ exports.protect = catchAsync(async (req, res, next) => {
     token,
     process.env.JWT_SECRET
   );
-
   console.log(decodedToken);
 
   // 3) Check if user still exists
+  const user = await User.findById(decodedToken.id);
+  if (!user) {
+    return next(new AppError("User that owns the token doesn't exist."), 401);
+  }
 
   // 4) Check if user changed password after the token was issued
 
   // GRANT ACCESS TO PROTECTED ROUTE
+  req.user = user;
   next();
 });

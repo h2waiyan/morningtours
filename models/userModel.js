@@ -22,6 +22,10 @@ const userSchema = new mongoose.Schema({
     minlength: 8,
     select: false,
   },
+  passwordChangeAt: {
+    type: Date,
+    // default:
+  },
 });
 
 const User = mongoose.model("User", userSchema);
