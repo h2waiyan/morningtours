@@ -6,7 +6,11 @@ const tourRouter = express.Router();
 
 tourRouter
   .route("/")
-  .get(authCtrl.protect, tourCtrl.getAllTours)
+  .get(
+    authCtrl.protect,
+    authCtrl.restrictTo("admin", "lead-guide", "user"),
+    tourCtrl.getAllTours
+  )
   .delete(tourCtrl.deleteAllTours)
   .post(tourCtrl.addNewTour);
 

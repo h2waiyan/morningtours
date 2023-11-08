@@ -39,22 +39,14 @@ exports.getOneTour = async (req, res) => {
   }
 };
 
-exports.addNewTour = async (req, res) => {
-  try {
-    const newTour = await Tour.create(req.body);
-    res.status(200).json({
-      status: "success",
-      message: "Tour has been added successfully.",
-      tour: newTour,
-    });
-  } catch (err) {
-    console.log(err);
-    res.status(401).json({
-      status: "fail",
-      message: `${err.message} ${err.name}`,
-    });
-  }
-};
+exports.addNewTour = catchAsync(async (req, res) => {
+  const newTour = await Tour.create(req.body);
+  res.status(200).json({
+    status: "success",
+    message: "Tour has been added successfully.",
+    tour: newTour,
+  });
+});
 
 exports.updateOneTour = async (req, res) => {
   try {

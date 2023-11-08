@@ -3,8 +3,10 @@ const APIFeatures = require("../utils/apifeatures");
 const AppError = require("../utils/apperror");
 const catchAsync = require("../utils/catchAsync");
 const bcrypt = require("bcrypt");
+const crypto = require("crypto");
 const jwt = require("jsonwebtoken");
 const { promisify } = require("util");
+const sendEmail = require("../utils/nodemailer");
 
 signToken = (userid) => {
   return jwt.sign(
@@ -109,3 +111,63 @@ exports.protect = catchAsync(async (req, res, next) => {
   req.user = user;
   next();
 });
+
+exports.restrictTo = (...roles) => {
+  return (req, res, next) => {
+    if (!roles.includes(req.user.role)) {
+      return next(
+        new AppError("You do not have permission to perform this action.", 403)
+      );
+    }
+
+    next();
+  };
+};
+
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  // 1. Get user based on user's email
+  const user = await User.findOne({ email: req.body.email });
+
+  if (!user) {
+    return next(new AppError("User with this email doesn't exist.", 404));
+  }
+
+  // 2. Generate random access token
+  const { resetToken, passwordResetToken, passwordResetExpires } =
+    createPasswordResetToken();
+
+  // 2.1. Save the token to the database
+  await User.findByIdAndUpdate(user._id, {
+    passwordResetToken: passwordResetToken,
+    passwordResetExpires: passwordResetExpires,
+  });
+
+  // 3. Send it to user's email
+  await sendEmail({
+    email: user.email,
+    subject: "Your password reset token (valid for 10 minutes)",
+    message: `https://htoowaiyan.com/api/v1/users/resetpassword/${resetToken}.`,
+  });
+
+  res.status(200).json({
+    status: "success",
+    resetToken,
+  });
+});
+
+const createPasswordResetToken = () => {
+  const resetToken = crypto.randomBytes(32).toString("hex");
+
+  console.log(resetToken);
+
+  const passwordResetToken = crypto
+    .createHash("sha256")
+    .update(resetToken)
+    .digest("hex");
+
+  const passwordResetExpires = Date.now() + 10 * 60 * 1000;
+
+  return { resetToken, passwordResetToken, passwordResetExpires };
+};
+
+exports.resetPassword = (req, res, next) => {};

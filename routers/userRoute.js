@@ -11,6 +11,9 @@ userRouter.route("/getall").get(authCtrl.getAllUsers);
 //   .patch(userCtrl.updateOneUser)
 //   .delete(userCtrl.deleteOneUser);
 
+userRouter.post("/forgotpassword", authCtrl.forgotPassword);
+userRouter.post("/resetpassword/:token", authCtrl.resetPassword);
+
 userRouter.route("/login").post(authCtrl.login); // get one user
 userRouter.route("/register").post(authCtrl.register); // add new user
 
