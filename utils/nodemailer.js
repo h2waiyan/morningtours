@@ -7,7 +7,7 @@ const sendEmail = async (options) => {
     port: process.env.MAIL_PORT,
     auth: {
       user: process.env.MAIL,
-      pass: process.env.MAIL_PASS, // wmvdsrmruzppelcr
+      pass: process.env.MAIL_PASS, // wmvdsrmruzppelcr NOT GMAIL PASSWORD
     },
   });
 

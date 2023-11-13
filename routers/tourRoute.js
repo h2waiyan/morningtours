@@ -8,10 +8,12 @@ tourRouter
   .route("/")
   .get(
     authCtrl.protect,
-    authCtrl.restrictTo("admin", "lead-guide", "user"),
     tourCtrl.getAllTours
   )
-  .delete(tourCtrl.deleteAllTours)
+  .delete(
+    authCtrl.protect, // User info - role
+    authCtrl.restrictTo("admin", "lead-guide"),
+    tourCtrl.deleteAllTours)
   .post(tourCtrl.addNewTour);
 
 tourRouter

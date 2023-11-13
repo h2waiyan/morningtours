@@ -146,26 +146,27 @@ exports.forgotPassword = catchAsync(async (req, res, next) => {
   await sendEmail({
     email: user.email,
     subject: "Your password reset token (valid for 10 minutes)",
-    message: `https://htoowaiyan.com/api/v1/users/resetpassword/${resetToken}.`,
+    message: `http://localhost:8080/api/v1/users/resetpassword/${resetToken}.`,
   });
 
   res.status(200).json({
     status: "success",
+    message: "Your password reset token has been sent to your email.",
     resetToken,
   });
 });
 
 const createPasswordResetToken = () => {
-  const resetToken = crypto.randomBytes(32).toString("hex");
+  const resetToken = crypto.randomBytes(32).toString("hex"); // 32423423424235342
 
   console.log(resetToken);
 
   const passwordResetToken = crypto
     .createHash("sha256")
     .update(resetToken)
-    .digest("hex");
+    .digest("hex"); /// hashed token
 
-  const passwordResetExpires = Date.now() + 10 * 60 * 1000;
+  const passwordResetExpires = Date.now() + 10 * 60 * 1000; // Date.now in millisecs + 10 mins
 
   return { resetToken, passwordResetToken, passwordResetExpires };
 };
