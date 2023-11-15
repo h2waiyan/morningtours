@@ -18,7 +18,9 @@ app.use(logger);
 app.use(reqtime);
 
 app.get("/", (req, res) => {
-  res.end({ message: "Hello from Severs" });
+  res.status(200).json({
+    message: "Hello from server",
+  });
 });
 // Mounting the Router
 app.use("/api/v1/tours", tourRouter);
