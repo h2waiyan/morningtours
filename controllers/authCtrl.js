@@ -171,4 +171,32 @@ const createPasswordResetToken = () => {
   return { resetToken, passwordResetToken, passwordResetExpires };
 };
 
-exports.resetPassword = (req, res, next) => {};
+exports.resetPassword = catchAsync(async (req, res, next) => {
+  const token = req.params.token;
+
+  const passwordResetToken = crypto
+    .createHash("sha256")
+    .update(token)
+    .digest("hex"); /// hashed token
+
+  const user = await User.findOne({
+    passwordResetToken: passwordResetToken,
+    passwordResetExpires: { $gt: Date.now() },
+  });
+
+  if (!user) {
+    return next(new AppError("Password restt token invalid or expired", 403));
+  }
+
+  // newpassword => hashed => DB save
+  // passwordChangedAt => Date.now
+  // passwordResetToken, passwordResetExpires = null
+
+  // sign new token
+
+  return res.status(200).json({
+    status: "success",
+    message: "You have changed your password successfully",
+    token, // jwt token
+  });
+});
